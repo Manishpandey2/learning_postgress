@@ -1,14 +1,33 @@
 const express = require("express");
+const { book } = require("./database/connection.js");
 const app = express();
 
+app.use(express.json());
 require("./database/connection.js");
-app.get("/books", (req, res) => {
+app.get("/books", async (req, res) => {
+  const books = await book.findAll();
+
+  if (books.length === 0) {
+    return res.status(404).json({ message: "No books found" });
+  }
+
   res.json({
     message: "list of books is here",
+    books: books,
   });
 });
 
-app.post("/books", (req, res) => {
+app.post("/books", async (req, res) => {
+  console.log(req.body);
+  const { title, author, genre } = req.body;
+  if (!title || !author || !genre) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+  await book.create({
+    title,
+    author,
+    genre,
+  });
   res.json({
     message: "book added successfully",
   });
