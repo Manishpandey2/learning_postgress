@@ -8,6 +8,13 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
+db.book = require("./Model/book.model")(sequelize, DataTypes);
+db.user = require("./Model/user.model")(sequelize, DataTypes);
+
+db.sequelize.sync({ alter: false }).then(() => {
+  console.log("Drop and re-sync db.");
+});
+
 sequelize
   .authenticate()
   .then(() => {
